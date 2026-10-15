@@ -19,8 +19,8 @@ def prepare(source: pathlib.Path, dest: pathlib.Path, patch: pathlib.Path|None, 
             raise ValueError('Driver checkout does not match pinned commit; use --no-verify-git only for a trusted source copy')
     shutil.copytree(source,dest,ignore=shutil.ignore_patterns('.git','*.o','*.ko','*.mod*','*.cmd'))
     makefile=dest/'Makefile'
-    data = data.replace('EXTRA_CFLAGS += -DCONFIG_RESUME_IN_WORKQUEUE', '# CONFIG_RESUME_IN_WORKQUEUE disabled for ARM32 research', 1)
     data=makefile.read_text(encoding='utf-8')
+    data = data.replace('EXTRA_CFLAGS += -DCONFIG_RESUME_IN_WORKQUEUE', '# CONFIG_RESUME_IN_WORKQUEUE disabled for ARM32 research', 1)
     changes=[
         (r'^CONFIG_PLATFORM_I386_PC\s*=\s*y\s*$', 'CONFIG_PLATFORM_I386_PC = n'),
         (r'^CONFIG_PLATFORM_ARM_SUN50IW1P1\s*=\s*n\s*$', 'CONFIG_PLATFORM_ARM_SUN50IW1P1 = y')
