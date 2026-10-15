@@ -39,7 +39,7 @@ def prepare(source: pathlib.Path, dest: pathlib.Path, patch: pathlib.Path|None, 
       'purpose':'EXPERIMENTAL ARM32 driver SOURCE only — NOT installable firmware',
       'pinned_driver_commit':pins['driver']['commit'],
       'source_origin':str(source),
-      'changes':['CONFIG_PLATFORM_I386_PC=n','CONFIG_PLATFORM_ARM_SUN50IW1P1=y'],
+      'changes':['CONFIG_PLATFORM_I386_PC=n','CONFIG_PLATFORM_ARM_SUN50IW1P1=n'],
       'patched_for_linux_7_x': bool(patch),
       'runtime_verified':False,'safe_to_flash':False,
       'warning':'Upstream SUN50IW1P1 is ARM64-oriented; Kbuild must force ARCH=arm and explicit CROSS_COMPILE. Hardware pinctrl/regulators not verified.'
