@@ -1,8 +1,0 @@
-{
-  "purpose": "Pinned references for offline source reproduction; no flash support",
-  "driver": {"url": "https://github.com/smp79/rtl8733BS_WiFi_linux_v5.15.17-113", "commit": "6b522b308fb7482cb43be290d639cfdf2bfd1838"},
-  "catplay_firmware": {"url": "https://github.com/catplay-labs/catplay-firmware", "commit": "a8d0ce89eda388a4db7c8d86ca7b62eac9579025", "patch": "meta-carplay/recipes-radio/drivers/rtl8733bs/0001-linux-7.0-compatibility.patch"},
-  "v851s_prototype": {"url": "https://github.com/hbouhadji/prototype-v851s-port", "commit": "05d8262010922cefe05592238e8f60f98dab4613"},
-  "reference_kernel": "Linux 7.2.7 (experimental V851S stage1 only, NOT M6 kernel)",
-  "target": "armv7 Cortex-A7 RTL8733BS SDIO (candidate, not proven running on this device)"
-}
