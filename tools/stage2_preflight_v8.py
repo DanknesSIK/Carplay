@@ -35,7 +35,8 @@ def review(configfile,driver,output,source_dir=None):
     if make.is_file():
         s=make.read_text(errors='replace')
         if not re.search(r'^CONFIG_PLATFORM_I386_PC\s*=\s*n\s*$',s,re.M):reasons.append('Driver defaults to x86 or unknown platform')
-        if not re.search(r'^CONFIG_PLATFORM_ARM_SUN50IW1P1\s*=\s*y\s*$',s,re.M):reasons.append('ARM Sunxi platform branch has not been selected')
+        if not re.search(r'^CONFIG_PLATFORM_ARM_SUN50IW1P1\s*=\s*n\s*$', s, re.M):
+            reasons.append('ARM64 SUN50 platform must be disabled for generic ARM32 research build')
     data={'purpose':'Source/Kbuild read-only build gate','kernel_config':str(configfile),'driver_dir':str(driver),
           'required_kernel_flags':{f'CONFIG_{x}':c.get(x,'missing') for x in REQUIRED},
           'build_preflight_passed':not reasons,'issues':reasons,
