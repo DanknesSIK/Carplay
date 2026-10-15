@@ -1,0 +1,32 @@
+name: M6 ARM32 experimental RTL8733BS build
+on:
+  workflow_dispatch:
+jobs:
+  experimental-module:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout research scripts
+        uses: actions/checkout@v4
+      - name: Install ARM cross-compilation dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            gcc-arm-linux-gnueabihf binutils-arm-linux-gnueabihf \
+            build-essential bc bison flex libssl-dev libelf-dev \
+            libncurses-dev device-tree-compiler patch xz-utils git python3 \
+            kmod cpio curl file
+      - name: Compile V851S research kernel and RTL8733BS
+        run: bash tools/ci_build_driver_v9.sh
+      - name: Upload logs and research object when produced
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m6-build-logs-and-experimental-module
+          path: ci-output/
+          if-no-files-found: warn
+      - name: Safety notice
+        if: always()
+        run: echo 'Research-only compilation. Do NOT install any resulting .ko on stock M6 or flash firmware.'
