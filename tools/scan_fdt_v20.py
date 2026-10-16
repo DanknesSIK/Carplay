@@ -79,6 +79,7 @@ def validate_fdt(buf: bytes | mmap.mmap, at: int = 0) -> dict | None:
         root_compatible = []
         root_model = []
         nodes = []
+        top_level_nodes = set()
         tokens = 0
         while pos + 4 <= st_end:
             token = struct.unpack_from('>I', buf, pos)[0]
@@ -97,6 +98,8 @@ def validate_fdt(buf: bytes | mmap.mmap, at: int = 0) -> dict | None:
                     if root_seen or name:
                         return None
                     root_seen = True
+                if depth == 1:
+                    top_level_nodes.add(name)
                 names.append(name)
                 depth += 1
                 pos = at + align4(nul + 1 - at)
@@ -150,7 +153,14 @@ def validate_fdt(buf: bytes | mmap.mmap, at: int = 0) -> dict | None:
                 return None
         if not saw_end:
             return None
-        return {'offset': at, 'size_bytes': total, 'version': version,
+        # U-Boot FIT (.itb) itself is an FDT. A FIT index is NOT the board DTB.
+        is_fit = {'images', 'configurations'}.issubset(top_level_nodes)
+        fdt_kind = ('u-boot-fit-container' if is_fit else
+                    'board-device-tree-candidate' if root_model or root_compatible else
+                    'unclassified-fdt')
+        return {'fdt_kind': fdt_kind,
+                'is_board_device_tree_candidate': fdt_kind == 'board-device-tree-candidate',
+                'offset': at, 'size_bytes': total, 'version': version,
                 'root_model': root_model, 'root_compatible': root_compatible,
                 'hardware_nodes_reference_only': nodes,
                 'm6_identification_not_authenticated': True,
@@ -199,12 +209,18 @@ def classify(buf: bytes | mmap.mmap) -> dict:
 
 def analyse_buffer(name: str, buf: bytes | mmap.mmap) -> dict:
     c, was_limited = scan_candidates(buf)
+    board_candidates = sum(bool(x['is_board_device_tree_candidate']) for x in c)
+    fit_containers = sum(x['fdt_kind'] == 'u-boot-fit-container' for x in c)
+    unclassified = sum(x['fdt_kind'] == 'unclassified-fdt' for x in c)
     return {
         'input_name': name,
         'size_bytes': len(buf),
         'sha256': sha256_bytes(buf),
         'format_hints': classify(buf),
         'valid_literal_fdt_count': len(c),
+        'board_device_tree_candidates_count': board_candidates,
+        'fit_container_count': fit_containers,
+        'unclassified_fdt_count': unclassified,
         'scan_incomplete_due_to_limits': was_limited,
         'valid_literal_fdt_candidates': c,
         'no_dtb_does_not_exclude_other_partitions': not bool(c),
@@ -281,15 +297,23 @@ def make_report(paths: list[Path]) -> dict:
     if not found or all('skipped' in x for x in found):
         raise ValueError('No files were scanned')
     hits = sum(x.get('valid_literal_fdt_count', 0) for x in found)
+    board_hits = sum(x.get('board_device_tree_candidates_count', 0) for x in found)
+    fit_hits = sum(x.get('fit_container_count', 0) for x in found)
+    unclassified_hits = sum(x.get('unclassified_fdt_count', 0) for x in found)
     is_incomplete = limit_hit or any(
         'skipped' in x or x.get('scan_incomplete_due_to_limits') for x in found
     )
     return {'schema': 'm6.v851s.offline-fdt-preflight.v20',
             'scope': 'OFFLINE READ-ONLY, UNTRUSTED FILE SCAN; NOT DEVICE VALIDATION',
             'scanned_entries': len(found), 'literal_fdt_candidates_found': hits,
+            'board_device_tree_candidates_found': board_hits,
+            'fit_containers_found': fit_hits,
+            'unclassified_fdt_found': unclassified_hits,
             'input_limit_reached': limit_hit,
             'status': ('incomplete-some-inputs-skipped-or-limited' if is_incomplete
-                       else 'candidate-found-needs-authentication' if hits
+                       else 'board-dtb-candidate-needs-authentication' if board_hits
+                       else 'fit-container-only-not-a-board-dtb' if fit_hits and not unclassified_hits
+                       else 'unclassified-fdt-only-board-dtb-not-proven' if unclassified_hits
                        else 'no-literal-dtb-in-supplied-files'),
             'evidence': found,
             'm6_actual_board_dtb_authenticated': False,
