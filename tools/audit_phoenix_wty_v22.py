@@ -19,6 +19,7 @@ import sys
 
 import audit_toc1_v21 as toc1
 import scan_fdt_v20 as fdt
+import inspect_fit_v24 as fit
 
 HEADER_SIZE = 0x400
 ENTRY_SIZE = 0x400
@@ -76,6 +77,8 @@ def _scan_related_payload(data, name: str, start: int, length: int) -> dict:
             found, incomplete = fdt.scan_candidates(blob)
             result['literal_fdt_candidates'] = [
                 {'relative_offset': x['offset'], 'size_bytes': x['size_bytes'],
+                 'fdt_kind': x['fdt_kind'],
+                 'is_board_device_tree_candidate': x['is_board_device_tree_candidate'],
                  'root_model': x['root_model'], 'root_compatible': x['root_compatible']}
                 for x in found
             ]
@@ -83,6 +86,27 @@ def _scan_related_payload(data, name: str, start: int, length: int) -> dict:
         else:
             result['literal_fdt_candidates'] = []
             result['nested_search_truncated'] = False
+    # A FIT is an FDT-format index, not the board DTB. Look for FIT
+    # metadata in a bounded subcomponent, including non-TOC boot packages.
+    # Never execute referenced images or treat names as signed evidence.
+    if lower in ('boot_package.fex', 'boot_package_nor.fex', 'toc1.fex',
+                 'sunxi.fex', 'sunxi.dtb', 'dtb.fex', 'dtb', 'u-boot.fex'):
+        limit = min(length, MAX_NESTED_SEARCH)
+        blob = bytes(data[start:start+limit])
+        found, incomplete = fdt.scan_candidates(blob)
+        fit_nodes = [x for x in found if x['fdt_kind'] == 'u-boot-fit-container']
+        fit_reports = []
+        for item in fit_nodes[:4]:
+            try:
+                fit_reports.append(fit.inspect_fit(blob, item['offset']))
+            except ValueError:
+                fit_reports.append({'status':'FIT_METADATA_INVALID',
+                                    'safe_to_flash':False,
+                                    'actual_M6_DTB_authenticated':False})
+        result['u_boot_fit_containers_seen'] = len(fit_nodes)
+        result['u_boot_fit_metadata'] = fit_reports
+        result['fit_scan_incomplete'] = incomplete or len(fit_nodes)>4 or length>MAX_NESTED_SEARCH
+        result['contains_target_authenticated_dtb'] = False
     return result
 
 
