@@ -113,7 +113,7 @@ class FITV24(unittest.TestCase):
         self.assertEqual(x['embedded_or_relative_board_dtb_candidates'],1)
 
     def test_external_relative_out_of_bounds(self):
-        x=fit.inspect_fit(synthetic_fit(layout='external',offset=0x40000))
+        x=fit.inspect_fit(synthetic_fit(layout='external',offset=0x40000)[:4096])  # container metadata intact, referenced external bytes absent
         self.assertEqual(x['embedded_or_relative_board_dtb_candidates'],0)
         self.assertTrue(x['image_entries'][0]['external_data_out_of_bounds'])
 
