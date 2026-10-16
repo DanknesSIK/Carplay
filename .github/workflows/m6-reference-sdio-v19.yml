@@ -1,0 +1,45 @@
+name: M6 V851S public reference GPIO comparison v19 (offline audit only)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compare-pinned-public-dts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out audit scripts
+        uses: actions/checkout@v4
+      - name: Fail-closed unit tests
+        run: python3 -m unittest discover -s tests -p 'test_v19.py' -v
+      - name: Fetch two commit-pinned public DTS files (not an M6 DTB)
+        run: |
+          set -euo pipefail
+          mkdir -p .ci-work/reference-v19
+          curl -fsSL --retry 3 --connect-timeout 15 --max-time 90 \
+            'https://raw.githubusercontent.com/gxcreator/aa-smartbox-re/00fa1232a2faa04b91efb4dbd4d7e345489b7c1a/info/decompiled-tree-linux.dts' \
+            -o .ci-work/reference-v19/gxcreator.dts
+          curl -fsSL --retry 3 --connect-timeout 15 --max-time 90 \
+            'https://raw.githubusercontent.com/hbouhadji/prototype-v851s-port/05d8262010922cefe05592238e8f60f98dab4613/analyse-v851s/stock-full.dts' \
+            -o .ci-work/reference-v19/hbouhadji.dts
+          sha256sum .ci-work/reference-v19/*.dts > ci-output/m6-v19-reference-source-sha256.txt
+      - name: Audit only static source definitions, never enable Wi-Fi
+        run: |
+          python3 tools/audit_reference_sdio_v19.py \
+            --gx .ci-work/reference-v19/gxcreator.dts \
+            --hb .ci-work/reference-v19/hbouhadji.dts \
+            --out ci-output/m6-v19-reference-dts-audit.json
+      - name: Upload evidence only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m6-v19-public-reference-audit-not-verified
+          path: |
+            ci-output/m6-v19-reference-dts-audit.json
+            ci-output/m6-v19-reference-source-sha256.txt
+          if-no-files-found: warn
+      - name: Never flash or load experimental modules
+        if: always()
+        run: |
+          echo 'PUBLIC DTS DIFFERENCES ONLY - NOT AN M6 BOARD VERIFICATION'
+          echo 'DO NOT copy pins or flash/load any firmware/module based on this result.'
