@@ -1,0 +1,40 @@
+name: M6 V851S research board ABI (v16, no flash)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  board-abi-offline:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install ARM32 build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            gcc-arm-linux-gnueabihf binutils-arm-linux-gnueabihf \
+            build-essential bc bison flex libssl-dev libelf-dev \
+            libncurses-dev device-tree-compiler patch xz-utils git python3 \
+            kmod cpio curl file
+      - name: Audit fail-closed research metadata
+        run: |
+          python3 tools/review_board_v16.py --self-test
+          python3 tools/review_board_v16.py --out ci-output/m6-v16-board-static-audit.json
+      - name: Reproduce existing pinned ARM32 experimental kernel build
+        run: bash tools/ci_build_driver_v9.sh
+      - name: Build independent research board-ABI module
+        run: bash tools/ci_build_platform_v16.sh
+      - name: Export logs and static checks only (no platform ko)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m6-v16-research-only-logs
+          path: |
+            ci-output/*.json
+            ci-output/*.txt
+            ci-output/*.log
+          if-no-files-found: warn
+      - name: Safety notice
+        if: always()
+        run: echo 'M6 GPIO/DTB unverified. Do NOT load modules, install or flash.'
