@@ -1,6 +1,9 @@
 name: M6 v20 offline DTB locator synthetic safety tests
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/m6-stock-image-v20.yml'
 permissions:
   contents: read
 jobs:
