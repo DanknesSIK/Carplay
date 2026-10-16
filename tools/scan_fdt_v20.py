@@ -249,27 +249,46 @@ def analyse_path(path: Path) -> list[dict]:
 
 
 def make_report(paths: list[Path]) -> dict:
+    """Bound every input, including nested ZIP entries; signal incomplete scans."""
     found = []
-    for path in paths[:MAX_FILES]:
+    limit_hit = False
+    for path in paths:
+        if len(found) >= MAX_FILES:
+            limit_hit = True
+            break
         if not path.exists() or path.is_symlink():
             raise ValueError("Input path is missing or symlink: " + str(path))
         if path.is_dir():
             children = [p for p in sorted(path.iterdir()) if p.is_file() and not p.is_symlink()]
             if not children:
                 raise ValueError("Input directory has no regular files: " + str(path))
-            for child in children[:MAX_FILES - len(found)]:
-                found.extend(analyse_path(child))
+            if len(children) > MAX_FILES - len(found):
+                limit_hit = True
+            for child in children:
+                if len(found) >= MAX_FILES:
+                    break
+                more = analyse_path(child)
+                available = MAX_FILES - len(found)
+                if len(more) > available:
+                    limit_hit = True
+                found.extend(more[:available])
         else:
-            found.extend(analyse_path(path))
-        if len(found) >= MAX_FILES:
-            break
+            more = analyse_path(path)
+            available = MAX_FILES - len(found)
+            if len(more) > available:
+                limit_hit = True
+            found.extend(more[:available])
     if not found or all('skipped' in x for x in found):
         raise ValueError('No files were scanned')
     hits = sum(x.get('valid_literal_fdt_count', 0) for x in found)
+    is_incomplete = limit_hit or any(
+        'skipped' in x or x.get('scan_incomplete_due_to_limits') for x in found
+    )
     return {'schema': 'm6.v851s.offline-fdt-preflight.v20',
             'scope': 'OFFLINE READ-ONLY, UNTRUSTED FILE SCAN; NOT DEVICE VALIDATION',
             'scanned_entries': len(found), 'literal_fdt_candidates_found': hits,
-            'status': ('incomplete-some-inputs-skipped-or-limited' if any('skipped' in x or x.get('scan_incomplete_due_to_limits') for x in found)
+            'input_limit_reached': limit_hit,
+            'status': ('incomplete-some-inputs-skipped-or-limited' if is_incomplete
                        else 'candidate-found-needs-authentication' if hits
                        else 'no-literal-dtb-in-supplied-files'),
             'evidence': found,
@@ -277,7 +296,6 @@ def make_report(paths: list[Path]) -> dict:
             'm6_runtime_wlan_verified': False,
             'safe_to_load': False, 'safe_to_flash': False,
             'next': 'Obtain a genuine full stock image/boot package or read-only dump, confirm source and version; a partial OTA kernel is not sufficient.'}
-
 
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
