@@ -1,0 +1,35 @@
+name: M6 V851S PhoenixSuite IMAGEWTY container index v22 (synthetic only)
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/m6-phoenix-v22.yml'
+      - 'tools/audit_phoenix_wty_v22.py'
+      - 'tests/test_v22.py'
+      - 'tools/audit_toc1_v21.py'
+      - 'tools/scan_fdt_v20.py'
+permissions:
+  contents: read
+jobs:
+  offline-phoenix-index-test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Run bounded PhoenixSuite synthetic tests
+        run: python3 -m unittest discover -s tests -p 'test_v22.py' -v
+      - name: Verify existing metadata cannot authorize M6 firmware
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          j = json.loads(Path('docs/stock_boot_static_evidence_v18.json').read_text(encoding='utf-8'))
+          assert j['valid_literal_fdt_candidates'] == 0
+          print('PASS: M6 board-level evidence still unavailable')
+          PY
+      - name: No-flash assertion
+        if: always()
+        run: |
+          echo 'SYNTHETIC INPUTS ONLY: no original proprietary firmware.'
+          echo 'No network connection to M6, no driver install, no bootloader change or flashing.'
