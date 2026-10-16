@@ -1,0 +1,39 @@
+name: M6 offline regression suite v16-v22 (no hardware)
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/m6-offline-regression.yml'
+      - 'tools/**'
+      - 'tests/**'
+      - 'drivers/m6_sunxi_platform_v16/**'
+      - 'profiles/**'
+      - 'docs/stock_boot_static_evidence_v18.json'
+permissions:
+  contents: read
+jobs:
+  research-regression:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Run all offline unit tests (v16-v22)
+        run: python3 -m unittest discover -s tests -p 'test_v*.py' -v
+      - name: Enforce fail-closed firmware safety metadata
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          stock=json.loads(Path('docs/stock_boot_static_evidence_v18.json').read_text())
+          board=json.loads(Path('profiles/board_reference_evidence_v16.json').read_text())
+          assert stock['valid_literal_fdt_candidates'] == 0
+          for key in ('m6_specific_dtb_obtained', 'm6_specific_wifi_gpio_verified', 'm6_actual_sdio_host_verified', 'safe_to_load', 'safe_to_flash'):
+              assert board[key] is False, key
+          print('PASS: hardware authentication and flashing remain blocked')
+          PY
+      - name: Security notice
+        if: always()
+        run: |
+          echo 'Read-only tests using synthetic fixtures and repository research metadata only.'
+          echo 'No real M6 device, module loading, original firmware extraction or flash operation.'
