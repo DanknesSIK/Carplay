@@ -28,8 +28,11 @@ jobs:
           stock=json.loads(Path('docs/stock_boot_static_evidence_v18.json').read_text())
           board=json.loads(Path('profiles/board_reference_evidence_v16.json').read_text())
           assert stock['valid_literal_fdt_candidates'] == 0
-          for key in ('m6_specific_dtb_obtained', 'm6_specific_wifi_gpio_verified', 'm6_actual_sdio_host_verified', 'safe_to_load', 'safe_to_flash'):
+          for key in ('m6_specific_dtb_obtained', 'm6_specific_wifi_gpio_verified', 'm6_actual_sdio_host_verified'):
               assert board[key] is False, key
+          forbidden = set(board['forbidden_actions'])
+          assert {'flash', 'install', 'insmod', 'modprobe', 'erase-boot0'}.issubset(forbidden)
+          assert 'offline-source-review' in board['allowed_actions']
           print('PASS: hardware authentication and flashing remain blocked')
           PY
       - name: Security notice
