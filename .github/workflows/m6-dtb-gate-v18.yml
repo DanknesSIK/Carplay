@@ -1,0 +1,52 @@
+name: M6 V851S stage1 SDIO DTB audit v18 (offline only)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mmc-dtb-research-check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - name: Checkout analysis scripts
+        uses: actions/checkout@v4
+      - name: Install ARM32 and device-tree build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            gcc-arm-linux-gnueabihf binutils-arm-linux-gnueabihf \
+            build-essential bc bison flex libssl-dev libelf-dev \
+            libncurses-dev device-tree-compiler patch xz-utils git python3 \
+            kmod cpio curl file
+      - name: Run fail-closed unit tests
+        run: python3 -m unittest discover -s tests -p 'test_v18.py' -v
+      - name: Recreate pinned experimental build tree
+        run: bash tools/ci_build_driver_v9.sh
+      - name: Compile the USB-only reference stage1 DTB
+        run: |
+          set -euo pipefail
+          cp .ci-work/prototype/stage1/configs/sun8i-v851s-dongle-stage1-patchew-v2.dts \
+            .ci-work/linux-7.2.7/arch/arm/boot/dts/allwinner/sun8i-v851s-dongle-stage1.dts
+          make -C .ci-work/linux-7.2.7 O="$PWD/.ci-work/kernel-out" \
+            ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- \
+            -j4 allwinner/sun8i-v851s-dongle-stage1.dtb
+      - name: Audit real compiled prototype DTB and kernel configuration
+        run: |
+          python3 tools/audit_board_dtb_v18.py \
+            --patch .ci-work/prototype/stage1/configs/linux-7.2.7-v853-patchew-v2.patch \
+            --stage1-dts .ci-work/prototype/stage1/configs/sun8i-v851s-dongle-stage1-patchew-v2.dts \
+            --kernel-config .ci-work/kernel-out/.config \
+            --dtb .ci-work/kernel-out/arch/arm/boot/dts/allwinner/sun8i-v851s-dongle-stage1.dtb \
+            --out ci-output/m6-v18-stage1-dtb-audit.json
+      - name: Upload only audit evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m6-v18-readonly-dtb-check
+          path: |
+            ci-output/m6-v18-stage1-dtb-audit.json
+            ci-output/build.log
+          if-no-files-found: warn
+      - name: Safety notice
+        if: always()
+        run: echo 'Stage1 DTB is not M6 DTB; DO NOT install/load modules, alter boot0, or flash any firmware.'
