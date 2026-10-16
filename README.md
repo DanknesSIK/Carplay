@@ -16,6 +16,15 @@
 | v25 | 用户原厂 OTA 的原始文件复核 | 确认 boot header dt_size=0、更新只写 boot/customer，recovery 镜像不在该 SWU 的有效写入列表；记录精确哈希 |
 | v26 | 原厂 ADB 菜单确证、读设备工具已开发 | 提供仅已授权 USB ADB 设备的只读 DTB/内核/分区采集；**实机尚未连接，需物理操作** |
 
+## 实机 USB 核验后的最新结论（2026-10-16）
+
+- 用户 Windows 主机已确认 `adb devices -l` **无设备**；原厂 `conn=adb` 仅返回 `{"code":0}` 并未建立 ADB。请**停止**重复 ADB 测试，不要强制重绑定 `05AC:12A8` 为 Android 驱动。
+- 设备 USB 重新枚举显示 `05AC:12A8`，与其他 CarPlay USB gadget 模拟 iPhone 的公开行为一致，**不能用 VID/PID 验证当前 PCB**。
+- CatPlay 支持列表中的 `Wooboobox M6` 属于 **X1600/AX1800M**；本机升级镜像是 **V851S/ly2807**，不能使用它的固件，也不能使用 V821B/ly5166/T2 的固件。
+- 经用户原始 SWU CPIO 复核，`recovery` 镜像安装项被注释，实际固件写入只含 `boot` 和 `customer`。**没有完整救砖镜像**。
+- 物本官网公开下载中心暂未列出经验证匹配的 `ly2807` 全量固件。官方技术支持：**support@wooboobox.com**（[官网联系方式](https://cn.wooboobox.com/contact-us.html)）。针对本机向厂商确认完整恢复固件、分区/DTB、无损备份及恢复过程，明确旧运行版 `25060316.2807.2` 与研究 OTA `26041414.2807.2` 不同。
+- [v26 实机测试核查](docs/README-v26.md) 和 [Issue #1 所需资料](https://github.com/DanknesSIK/Carplay/issues/1) 已同步更新。**仍然不允许刷机或装入实验模块。**
+
 ## 当前证据缺口与下一步
 
 缺少原厂证据的追踪与解锁条件见 [Issue #1：M6 boot package / DTB 实机认证](https://github.com/DanknesSIK/Carplay/issues/1)。此问题尚未解决，不能通过更多合成 CI 测试绕过。
