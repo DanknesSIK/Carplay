@@ -1,0 +1,40 @@
+name: M6 v24 FIT metadata vs board DTB audit (offline synthetic only)
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/m6-fit-v24.yml'
+      - 'tools/inspect_fit_v24.py'
+      - 'tools/scan_fdt_v20.py'
+      - 'tests/test_v24.py'
+permissions:
+  contents: read
+jobs:
+  detect-fit-not-board-dtb:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout research source
+        uses: actions/checkout@v4
+      - name: Test FIT index classification, embedded and external FDT boundaries
+        run: python3 -m unittest discover -s tests -p 'test_v24.py' -v
+      - name: Confirm target M6 hardware remains unverified
+        run: |
+          python3 - <<'PY'
+          import sys
+          sys.path.insert(0,'tools')
+          from scan_fdt_v20 import validate_fdt
+          from inspect_fit_v24 import inspect_fit
+          assert not inspect_fit.__doc__ or isinstance(inspect_fit.__doc__, str)
+          from pathlib import Path
+          import json
+          board=json.loads(Path('profiles/board_reference_evidence_v16.json').read_text())
+          assert board['m6_specific_dtb_obtained'] is False
+          assert board['m6_specific_wifi_gpio_verified'] is False
+          print('PASS: FIT metadata is not M6 running-board proof')
+          PY
+      - name: Safety statement
+        if: always()
+        run: |
+          echo 'Synthetic FIT only; no original firmware, no real M6 connection.'
+          echo 'No module installation, no flash, no signature verification claimed.'
