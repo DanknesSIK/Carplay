@@ -1,0 +1,46 @@
+name: M6 v23 real public V851SE DTB cross-check (NOT M6)
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/m6-public-real-dtb-v23.yml'
+      - 'tools/verify_public_dtb_v23.py'
+      - 'tools/scan_fdt_v20.py'
+      - 'tests/test_v23.py'
+permissions:
+  contents: read
+jobs:
+  test-published-reference-dtbs:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Run security tests
+        run: python3 -m unittest discover -s tests -p 'test_v23.py' -v
+      - name: Download only two commit-pinned PUBLIC V851SE DTBs
+        run: |
+          set -euo pipefail
+          mkdir -p .ci-work/v23
+          commit=05d8262010922cefe05592238e8f60f98dab4613
+          base="https://raw.githubusercontent.com/hbouhadji/prototype-v851s-port/$commit/analyse-v851s"
+          curl -fLsS --retry 3 --connect-timeout 15 --max-time 90 "$base/stock-full.dtb" -o .ci-work/v23/stock-full.dtb
+          curl -fLsS --retry 3 --connect-timeout 15 --max-time 90 "$base/stock-small.dtb" -o .ci-work/v23/stock-small.dtb
+      - name: Verify pinned Git object hashes and decode real FDT nodes
+        run: |
+          python3 tools/verify_public_dtb_v23.py \
+            --full .ci-work/v23/stock-full.dtb \
+            --small .ci-work/v23/stock-small.dtb \
+            --out ci-output/m6-v23-public-reference-not-M6.json
+      - name: Upload metadata report only (never upload raw DTB binary)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m6-v23-published-v851se-reference-not-target
+          path: ci-output/m6-v23-public-reference-not-M6.json
+          if-no-files-found: warn
+      - name: Safety boundaries
+        if: always()
+        run: |
+          echo 'Public V851SE reference only, NOT an M6 actual-board DTB.'
+          echo 'No firmware flashed, no original customer firmware downloaded, no hardware accessed.'
