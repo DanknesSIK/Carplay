@@ -1,0 +1,43 @@
+name: M6 V851S RTL8733BS joint ABI v17 (offline only)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  joint-modpost-offline:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - name: Checkout research sources
+        uses: actions/checkout@v4
+      - name: Install ARM32 build/test dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            gcc-arm-linux-gnueabihf binutils-arm-linux-gnueabihf \
+            build-essential bc bison flex libssl-dev libelf-dev \
+            libncurses-dev device-tree-compiler patch xz-utils git python3 \
+            kmod cpio curl file
+      - name: v17 offline test suite
+        run: |
+          python3 -m unittest discover -s tests -p 'test_v17.py' -v
+          bash -n tools/ci_build_joint_v17.sh
+      - name: Reproduce pinned experimental kernel and generic RTL8733BS module
+        run: bash tools/ci_build_driver_v9.sh
+      - name: Build independent v16 research platform module
+        run: bash tools/ci_build_platform_v16.sh
+      - name: Build legacy ABI RTL8733BS and verify joint modpost linkage
+        run: bash tools/ci_build_joint_v17.sh
+      - name: Upload evidence reports and logs only (no .ko)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m6-v17-offline-joint-linkage-evidence
+          path: |
+            ci-output/*.json
+            ci-output/*.txt
+            ci-output/*.log
+          if-no-files-found: warn
+      - name: Safety notice
+        if: always()
+        run: echo 'Only Linux 7.2.7 offline modpost validated; never load these modules on M6, never flash.'
