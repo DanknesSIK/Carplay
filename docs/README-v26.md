@@ -1,5 +1,15 @@
 # M6 v26 — 原厂后台 ADB 模式 + 只读实机证据采集
 
+## 2026-10-16 实机测试结论（重要更新）
+
+- 用户在原厂 CGI 执行 `id=set&conn=adb`，服务器返回 `{"code":0}`，但这**仅表示接受设置请求**，不能证明启动了 ADB 服务。
+- Windows 正确安装 Android Platform Tools 后，`adb devices -l` 多次列出空设备列表。直接连接电脑与通过 USB Hub 均未识别出可用 ADB。
+- USB 断开/连接前后 Windows 的新增设备是 `USB\\VID_05AC&PID_12A8` 及 `MI_00` MTP；该次测试用户确认没有通过 USB 接入 iPhone。该标识**与其他 CarPlay 转换器模拟 iPhone USB gadget 的已公开行为一致**，但不能单凭 VID/PID 认证 M6 PCB 或 USB 固件行为。参考：https://github.com/harrylepotter/carplay-receiver/issues/9 及 https://github.com/GainSec/3rdParty-Carplay-AndroidAuto-Dongle-Security-Research 。
+- **立即停止继续试 ADB、装未知 USB 驱动、将 Apple 接口强制替换为 ADB 驱动。** 如已切换 `adb`，在确认原厂后台可访问的情况下恢复默认 `conn=aoa`，验证 CarPlay 正常。
+- 本文件后面原有 ADB 操作步骤保留作历史说明和仅在确实发现已授权 ADB 时的工具使用文档，**不再作为本机当前推荐操作**。
+- 已按板级而非商品营销型号核对 [CatPlay](https://github.com/catplay-labs/catplay/blob/986776c022cad40bf2e7f2df09c02cf9807936e2/README.md)：已支持的 `Wooboobox M6` 条目是 `Ingenic X1600 / AX1800M`，不是原厂升级包为 `v851s-lybox_rtl8`、`ly2807` 的本机；V851S 的 `Wooboobox T2` 条目是 `AIC8800D80` 移植中，也不是该机的匹配候选。
+- **唯一剩余高价值方案**：从物本官方技术支持索取 `ly2807 / v851s-lybox_rtl8` 完整启动链/分区资料/恢复步骤；官网邮箱 support@wooboobox.com，来源 https://cn.wooboobox.com/contact-us.html 。当前设备报告运行 `25060316.2807.2`，另有原厂 OTA `26041414.2807.2` 仅供离线研究；不要混淆两版，更不要安装陌生固件。
+
 ## 为什么这一阶段比继续编译更重要
 
 复核用户自己保存的 `M6-backend.html`（来源于 M6 原厂后台）确认存在菜单 **连接方式** 与两个选项：
