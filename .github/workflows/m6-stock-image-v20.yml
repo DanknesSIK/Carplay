@@ -1,0 +1,30 @@
+name: M6 v20 offline DTB locator synthetic safety tests
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-safety-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Run synthetic-only read-only validator tests
+        run: python3 -m unittest discover -s tests -p 'test_v20.py' -v
+      - name: Verify prior v18 evidence still reports no M6 board verification
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          path = Path('docs/stock_boot_static_evidence_v18.json')
+          x = json.loads(path.read_text(encoding='utf-8'))
+          assert x['valid_literal_fdt_candidates'] == 0, 'Unexpected change in prior evidence'
+          assert x['sample'].startswith('user supplied offline upgrade kernel'), 'Wrong firmware sample'
+          print('V20_PRIOR_EVIDENCE_INSUFFICIENT_AS_EXPECTED')
+          PY
+      - name: Safety limits
+        run: |
+          echo 'NO firmware is uploaded to this CI.'
+          echo 'NO target hardware is contacted or changed.'
+          echo 'NO module is loaded and NO bootloader/flash is modified.'
