@@ -1,0 +1,22 @@
+{
+  "schema": "m6.v851s.board-abi.audit.v16",
+  "status": "static-check-passed",
+  "checks_passed": true,
+  "issues": [],
+  "reference_sdio_host_candidates": [
+    1
+  ],
+  "reference_regon_gpio_differ": true,
+  "abi_functions": [
+    "sunxi_wlan_set_power",
+    "sunxi_wlan_get_bus_index",
+    "sunxi_mmc_rescan_card"
+  ],
+  "m6_board_proven": false,
+  "m6_gpio_proven": false,
+  "m6_sdio_wiring_proven": false,
+  "platform_module_kbuild_verified": false,
+  "safe_to_load": false,
+  "safe_to_flash": false,
+  "note": "Static audit PASSED does not mean the M6 board is supported. CI kernel build is separate."
+}

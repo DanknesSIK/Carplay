@@ -1,0 +1,43 @@
+{
+  "schema": "m6.v851s.board-abi.evidence.v16",
+  "purpose": "Two public V851S board examples only; NOT an M6 device tree or pinout",
+  "board_identifier_from_user_firmware": "v851s-lybox_rtl8",
+  "stock_kernel_version": "4.9.191",
+  "experimental_kernel_version": "7.2.7",
+  "original_module_symbols": [
+    "sunxi_wlan_set_power", "sunxi_wlan_get_bus_index", "sunxi_mmc_rescan_card"
+  ],
+  "reference_sources": [
+    {
+      "name": "gxcreator",
+      "repo": "gxcreator/aa-smartbox-re",
+      "commit": "00fa1232a2faa04b91efb4dbd4d7e345489b7c1a",
+      "path": "info/decompiled-tree-linux.dts",
+      "wlan_busnum": 1,
+      "mmc_address": "0x04021000",
+      "wlan_regon_reference_gpio": "PE6",
+      "chip_en_reference_gpio": "PH13"
+    },
+    {
+      "name": "hbouhadji",
+      "repo": "hbouhadji/prototype-v851s-port",
+      "commit": "05d8262010922cefe05592238e8f60f98dab4613",
+      "path": "analyse-v851s/stock-full.dts",
+      "wlan_busnum": 1,
+      "mmc_address": "0x04021000",
+      "wlan_regon_reference_gpio": "PA11",
+      "chip_en_reference_gpio": "PE9"
+    }
+  ],
+  "platform_api_reference": {
+    "repo": "raauve/x96q-ssv6006-wifi",
+    "path": "sunxi-rf/sunxi-wlan.c",
+    "note": "H616/X96Q code illustrates three ABI functions; wrong SoC and pinout for M6"
+  },
+  "m6_specific_dtb_obtained": false,
+  "m6_specific_wifi_gpio_verified": false,
+  "m6_actual_sdio_host_verified": false,
+  "m6_recovery_verified": false,
+  "allowed_actions": ["offline-source-review", "CI-cross-compile", "ELF-symbol-audit"],
+  "forbidden_actions": ["flash", "install", "insmod", "modprobe", "erase-boot0", "copy-reference-gpios"]
+}

@@ -1,0 +1,18 @@
+/* INFORMATION ONLY; NOT A COMPILE-READY DEVICE TREE AND NEVER TO BE FLASHED.
+ * Real M6 GPIOs, regulators, clocks and MMC host remain UNVERIFIED.
+ * Two V851S reference boards use SDIO1, but their GPIOs differ.
+ * Do NOT substitute PE6/PH13 or PA11/PE9 for M6 measurements.
+ * The platform driver deliberately will NOT match this disabled example.
+ */
+
+/* Illustration of necessary proof after recovering an ACTUAL M6 board DTB:
+ *   compatible: research,v851s-lybox-rtl8-wifi-verified
+ *   research,board-verified: BOOLEAN, do not set without physical verification
+ *   wlan-bus-index: integer [0, 2], must agree with MMC host phandle
+ *   mmc-host: phandle to real MMC host
+ *   wlan-regon-gpios: verified power-enable GPIO
+ *   chip-en-gpios: verified chip-enable GPIO
+ *   wlan-supply: optional verified regulator
+ * A working production design must also review pwrseq, pinctrl, bus clock,
+ * suspend/resume sequencing and device-tree binding review.
+ */
