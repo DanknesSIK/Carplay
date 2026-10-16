@@ -1,0 +1,9 @@
+{
+  "size_bytes": 2066432,
+  "valid_literal_fdt_candidates": 0,
+  "offsets": [],
+  "android_boot_magic": true,
+  "board_marker_found": true,
+  "sample": "user supplied offline upgrade kernel (NOT the currently installed 25060316.2807.2 stock backup)",
+  "scope": "scanned this supplied file for plain structurally plausible FDT headers only; does not exclude DTB on other partitions"
+}
