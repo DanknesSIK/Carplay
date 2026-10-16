@@ -188,5 +188,16 @@ class FITV24(unittest.TestCase):
 
 
 
+    def test_toc1_dtb_entry_containing_fit_is_not_board_dtb(self):
+        import audit_toc1_v21 as toc1
+        from test_v21 import toc1_fixture
+        blob = toc1_fixture([('dtb', synthetic_fit(kind='kernel',layout='none'), 0)])
+        index = toc1.parse_toc1(blob)
+        self.assertIsNotNone(index)
+        self.assertFalse(index['items'][0]['literal_fdt_structure_valid'])
+        self.assertFalse(index['target_board_authenticated'])
+
+
+
 if __name__=='__main__':
     unittest.main()
