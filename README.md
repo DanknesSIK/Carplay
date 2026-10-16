@@ -1,4 +1,4 @@
-# M6 V851S / RTL8733BS 研究总览（更新至 v23，2026-10-16）
+# M6 V851S / RTL8733BS 研究总览（更新至 v24，2026-10-16）
 
 > **尚未取得适用于当前 M6 的原厂 DTB 或可恢复备份。没有刷机或模块安装授权。所有成功的 GitHub Actions 仅证明离线编译和静态测试，不证明硬件兼容。**
 
@@ -12,6 +12,7 @@
 | v21 | 14/14 测试通过 | 离线 TOC1/boot_package 目录检查及 DTB 条目校验 |
 | v22 | 14/14 测试通过 | PhoenixSuite IMAGEWTY 完整 IMG 目录索引、FDT/TOC1 递归静态检查 |
 | v23 | 真实公开 DTB 校验通过 | 固定 Git blob 验证 V851SE 两份真实设备树、修复超限漏扫误报；**不是 M6 设备树** |
+| v24 | FIT 与板级 DTB 分离，完整回归通过 | 新增 FIT 镜像列表和内嵌/外置 DTB 静态分析；接入 v22 目录扫描，**不是 M6 实机验证** |
 
 ## 当前证据缺口与下一步
 
@@ -26,12 +27,13 @@
 - `python tools/scan_fdt_v20.py --input FILE --out report.json`
 - `python tools/audit_toc1_v21.py --input FILE --out report.json`
 - `python tools/audit_phoenix_wty_v22.py --input FULL_PHOENIX_IMG --out report.json`
+- `python tools/inspect_fit_v24.py --input U_BOOT_FIT_ITB --out report.json`
 
 这些工具**仅在本地、使用合法持有的二进制样本**；不连接实机、不上传原厂镜像；如果当前手头只有增量升级包，建议先检查是否能由厂商提供完整版本匹配的启动包，而不是继续刷机实验。
 
 ### 分阶段记录
 
-下面保留最初的 v16 研究说明以追溯历史。v23 的公开真实 DTB 校验记录见 [Actions](https://github.com/DanknesSIK/Carplay/actions/runs/38869022595)。详见 `docs/README-v19.md` 至 `docs/README-v23.md`。
+下面保留最初的 v16 研究说明以追溯历史。v23 的公开真实 DTB 校验记录见 [Actions](https://github.com/DanknesSIK/Carplay/actions/runs/38869022595)。详见 `docs/README-v19.md` 至 `docs/README-v24.md`。
 
 ---
 
