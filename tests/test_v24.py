@@ -158,5 +158,35 @@ class FITV24(unittest.TestCase):
         self.assertFalse(x['running_M6_firmware_version_matched'])
 
 
+    def test_v22_phoenix_container_contains_fit_not_board_index(self):
+        import audit_phoenix_wty_v22 as wty
+        from test_v22 import make_wty
+        report = wty.inspect_image(make_wty([('u-boot.fex', synthetic_fit())]))
+        nested = report['entries'][0]['offline_details']
+        self.assertEqual(nested['u_boot_fit_containers_seen'],1)
+        self.assertEqual(nested['u_boot_fit_metadata'][0]['embedded_or_relative_board_dtb_candidates'],1)
+        self.assertFalse(nested['contains_target_authenticated_dtb'])
+        self.assertTrue(any(x['fdt_kind']=='u-boot-fit-container'
+                            for x in nested['literal_fdt_candidates']))
+
+    def test_v22_phoenix_non_toc_boot_package_can_contain_fit(self):
+        import audit_phoenix_wty_v22 as wty
+        from test_v22 import make_wty
+        report=wty.inspect_image(make_wty([('boot_package.fex',synthetic_fit(layout='external'))]))
+        evidence=report['entries'][0]['offline_details']
+        self.assertFalse(evidence['toc1_index_valid'])
+        self.assertEqual(evidence['u_boot_fit_containers_seen'],1)
+        self.assertFalse(report['m6_real_device_dtb_authenticated'])
+
+    def test_v22_phoenix_literal_dtb_still_marked_board_candidate(self):
+        import audit_phoenix_wty_v22 as wty
+        from test_v22 import make_wty
+        report=wty.inspect_image(make_wty([('sunxi.fex',fake_fdt())]))
+        evidence=report['entries'][0]['offline_details']
+        self.assertEqual(evidence['u_boot_fit_containers_seen'],0)
+        self.assertTrue(evidence['literal_fdt_candidates'][0]['is_board_device_tree_candidate'])
+
+
+
 if __name__=='__main__':
     unittest.main()
