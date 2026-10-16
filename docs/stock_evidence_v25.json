@@ -1,0 +1,89 @@
+{
+  "schema": "m6.stock-ota-and-recovery-evidence.v25",
+  "source_scope": "User-supplied M6 OTA firmware files re-audited offline on 2026-10-16; this checked-in manifest is metadata only, not a firmware image",
+  "source_files": {
+    "M6-header.bin": {
+      "size_bytes": 1048576,
+      "sha256": "24dd123b6629f1da90613ed13bdab9a46919742e590088dcc1a2ac39eadd120d"
+    },
+    "kernel": {
+      "size_bytes": 2066432,
+      "sha256": "5a17aa388f98011ba7f24508b9d6a4b84650c45ceb68f173307031dd15b992c9"
+    },
+    "customer": {
+      "size_bytes": 4366336,
+      "sha256": "f81c48122f138855ad193fd48a7eafff84691c4a2bd621cb19d2c115c2d3a1d5"
+    }
+  },
+  "swu_header_is_prefix_only": true,
+  "swu_entries_visible_in_prefix": [
+    {
+      "name": "sw-description",
+      "declared_size": 3186,
+      "header_offset": 45,
+      "data_offset": 173,
+      "payload_fully_present": true,
+      "payload_sha256": "14f64f485e22884b0707f6729cb0ffd2b98d9f154a13a0f52e3bbacc076cd42d"
+    },
+    {
+      "name": "customer",
+      "declared_size": 4366336,
+      "header_offset": 3361,
+      "data_offset": 3481,
+      "payload_fully_present": false
+    }
+  ],
+  "swupdate": {
+    "ly_project_name": "ly2807",
+    "active_upgrade_kernel_image_targets": [
+      {
+        "filename": "kernel",
+        "target": "/dev/by-name/boot"
+      },
+      {
+        "filename": "customer",
+        "target": "/dev/by-name/customer"
+      }
+    ],
+    "recovery_bootenv_switch_present": true,
+    "recovery_image_install_active": false,
+    "recovery_image_in_verified_ota_prefix": false,
+    "full_recovery_image_verified": false
+  },
+  "boot_image": {
+    "format": "android-boot-image",
+    "boot_board_identifier": "v851s-lybox_rtl8",
+    "kernel_size_header_bytes": 2061216,
+    "ramdisk_size_header_bytes": 12,
+    "dtb_size_header_bytes": 0,
+    "page_size": 2048,
+    "literal_fdt_magic_count": 0,
+    "full_fdt_validated_in_boot_image": false
+  },
+  "customer_image": {
+    "filesystem": "squashfs",
+    "magic": "hsqs",
+    "actual_module_extraction_this_run": false
+  },
+  "user_device_reported_version": "25060316.2807.2",
+  "ota_version_from_prior_customer_report": "26041414.2807.2",
+  "version_mismatch": true,
+  "previous_vendor_module_metadata": {
+    "source": "Previously extracted v5 module report; not re-extracted during v25 analysis",
+    "vermagic": "4.9.191 preempt mod_unload ARMv7 thumb2 p2v8",
+    "sha256": "aa4a1205f77dd06b2ab82ff9e1af22125b9f831c1bc8fcfa92b0a5c74e6477b9",
+    "platform_symbol_dependencies": [
+      "sunxi_mmc_rescan_card",
+      "sunxi_wlan_get_bus_index",
+      "sunxi_wlan_set_power"
+    ]
+  },
+  "real_m6_fel_usb_confirmed": false,
+  "backup_of_actual_current_firmware_verified": false,
+  "m6_specific_dtb_or_partition_layout_verified": false,
+  "matched_kernel_tree_config_and_symbol_version_verified": false,
+  "real_m6_gpio_sdio_power_sequence_verified": false,
+  "recovery_procedure_tested": false,
+  "safe_to_load": false,
+  "safe_to_flash": false
+}
