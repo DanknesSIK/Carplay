@@ -1,4 +1,4 @@
-name: M6 offline regression suite v16-v22 (no hardware)
+name: M6 offline regression suite v16-v23 (no hardware)
 on:
   workflow_dispatch:
   push:
@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Run all offline unit tests (v16-v22)
+      - name: Run all offline unit tests (v16-v23)
         run: python3 -m unittest discover -s tests -p 'test_v*.py' -v
       - name: Enforce fail-closed firmware safety metadata
         run: |
