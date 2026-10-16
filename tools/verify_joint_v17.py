@@ -37,7 +37,7 @@ def validate(link: dict) -> list:
         issues.append("RTL8733BS did not reference exactly the 3 legacy platform symbols")
     if PLATFORM not in link["wifi_dependencies"]:
         issues.append("Wi-Fi .ko does not declare a dependency on the v16 platform module")
-    if link["wifi_vermagic"] != link["platform_vermagic"] or not link["wifi_vermagic"].startswith("7.2.7 "):
+    if link["wifi_vermagic"] != link["platform_vermagic"] or not re.match(r"^7\.2\.7(?:-[^\s]+)?\s", link["wifi_vermagic"]):
         issues.append("Module vermagic mismatch or wrong experimental kernel")
     if link["wifi_module_name"] != "8733bs" or link["platform_module_name"] != PLATFORM:
         issues.append("Unexpected module names")
