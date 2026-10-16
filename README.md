@@ -1,4 +1,4 @@
-# M6 V851S / RTL8733BS 研究总览（更新至 v21，2026-10-16）
+# M6 V851S / RTL8733BS 研究总览（更新至 v22，2026-10-16）
 
 > **尚未取得适用于当前 M6 的原厂 DTB 或可恢复备份。没有刷机或模块安装授权。所有成功的 GitHub Actions 仅证明离线编译和静态测试，不证明硬件兼容。**
 
@@ -10,6 +10,7 @@
 | v19 | 通过 | 公开 V851S/V851SE 均为 SDIO1，供电 GPIO 不同 |
 | v20 | 12/12 测试通过 | 离线原始镜像中的 FDT 结构扫描 |
 | v21 | 14/14 测试通过 | 离线 TOC1/boot_package 目录检查及 DTB 条目校验 |
+| v22 | 14/14 测试通过 | PhoenixSuite IMAGEWTY 完整 IMG 目录索引、FDT/TOC1 递归静态检查 |
 
 ## 当前证据缺口与下一步
 
@@ -23,12 +24,13 @@
 
 - `python tools/scan_fdt_v20.py --input FILE --out report.json`
 - `python tools/audit_toc1_v21.py --input FILE --out report.json`
+- `python tools/audit_phoenix_wty_v22.py --input FULL_PHOENIX_IMG --out report.json`
 
 这两个工具**仅在本地、使用合法持有的二进制样本**；不连接实机、不上传原厂镜像；如果当前手头只有增量升级包，建议先检查是否能由厂商提供完整版本匹配的启动包，而不是继续刷机实验。
 
 ### 分阶段记录
 
-下面保留最初的 v16 研究说明以追溯历史。详见 `docs/README-v19.md`、`docs/README-v20.md`、`docs/README-v21.md`。
+下面保留最初的 v16 研究说明以追溯历史。详见 `docs/README-v19.md` 至 `docs/README-v22.md`。
 
 ---
 
