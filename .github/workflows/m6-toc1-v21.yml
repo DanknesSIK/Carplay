@@ -1,0 +1,34 @@
+name: M6 V851S TOC1 container and DTB index v21 (synthetic only)
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/m6-toc1-v21.yml'
+      - 'tools/audit_toc1_v21.py'
+      - 'tests/test_v21.py'
+permissions:
+  contents: read
+jobs:
+  offline-index-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout research code
+        uses: actions/checkout@v4
+      - name: Run synthetic TOC1 security and FDT tests
+        run: python3 -m unittest discover -s tests -p 'test_v21.py' -v
+      - name: Verify older stock-boot evidence is explicitly insufficient
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          j=json.loads(Path('docs/stock_boot_static_evidence_v18.json').read_text())
+          assert j['valid_literal_fdt_candidates']==0
+          assert j['sample'].startswith('user supplied offline upgrade kernel')
+          print('PASS: upgrade kernel scan does not authenticate any M6 device tree')
+          PY
+      - name: Safety report
+        if: always()
+        run: |
+          echo 'Only synthetic test fixtures were inspected.'
+          echo 'No real M6 firmware, no online device access, no driver loading, no flash.'
