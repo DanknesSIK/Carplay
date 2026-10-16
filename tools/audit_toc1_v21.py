@@ -105,7 +105,7 @@ def parse_toc1(buf: bytes | mmap.mmap, at: int = 0) -> dict | None:
             # Inspect DTB only in a named plaintext item. Do not decode encrypted items.
             if name_decoded.lower() in ('dtb', 'sunxi.dtb', 'fdt') and encrypted == 0:
                 fdt = validate_fdt(buf, at+offset)
-                if fdt and fdt['size_bytes'] <= length:
+                if fdt and fdt['size_bytes'] <= length and fdt['is_board_device_tree_candidate']:
                     entry['literal_fdt_structure_valid'] = True
                     entry['dtb_root_model'] = fdt['root_model']
                     entry['dtb_root_compatible'] = fdt['root_compatible']
