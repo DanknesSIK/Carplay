@@ -36,5 +36,45 @@ class PublicFixtureGuard(unittest.TestCase):
             self.assertFalse(output[field])
 
 
+    def test_directory_over_limit_reports_incomplete(self):
+        import tempfile
+        import scan_fdt_v20 as v20
+        with tempfile.TemporaryDirectory() as d:
+            folder = Path(d)
+            for i in range(v20.MAX_FILES+1):
+                (folder / f'{i:03}.bin').write_bytes(b'no-fdt')
+            report = v20.make_report([folder])
+        self.assertEqual(report['scanned_entries'], v20.MAX_FILES)
+        self.assertTrue(report['input_limit_reached'])
+        self.assertEqual(report['status'], 'incomplete-some-inputs-skipped-or-limited')
+        self.assertFalse(report['safe_to_flash'])
+
+    def test_zip_over_limit_reports_incomplete(self):
+        import tempfile
+        import zipfile
+        import scan_fdt_v20 as v20
+        with tempfile.TemporaryDirectory() as d:
+            z = Path(d)/'synthetic.zip'
+            with zipfile.ZipFile(z,'w') as archive:
+                for i in range(v20.MAX_FILES+2):
+                    archive.writestr(f'{i:03}.bin', b'none')
+            report = v20.make_report([z])
+        self.assertTrue(report['input_limit_reached'])
+        self.assertEqual(report['scanned_entries'],v20.MAX_FILES)
+        self.assertEqual(report['status'], 'incomplete-some-inputs-skipped-or-limited')
+
+    def test_exact_limit_not_incomplete_without_more_inputs(self):
+        import tempfile
+        import scan_fdt_v20 as v20
+        with tempfile.TemporaryDirectory() as d:
+            folder=Path(d)
+            for i in range(v20.MAX_FILES):
+                (folder / f'{i:03}.bin').write_bytes(b'none')
+            report=v20.make_report([folder])
+        self.assertFalse(report['input_limit_reached'])
+        self.assertEqual(report['scanned_entries'], v20.MAX_FILES)
+        self.assertEqual(report['status'], 'no-literal-dtb-in-supplied-files')
+
+
 if __name__=='__main__':
     unittest.main()
