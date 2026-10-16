@@ -49,7 +49,7 @@ def synthetic_fit(*, kind='flat_dt', compression='none', layout='embedded', payl
     structure += _begin('conf-1')
     structure += _prop('description', b'only test\0')
     structure += _prop('fdt', config.encode()+b'\0')
-    structure += _word(2) + _word(2) + _word(9)
+    structure += _word(2) + _word(2) + _word(2) + _word(9)  # end conf, configurations, root
     reserve = b'\0'*16
     struct_off = 40+len(reserve)
     str_off = struct_off + len(structure)
