@@ -16,6 +16,14 @@
 | v25 | 用户原厂 OTA 的原始文件复核 | 确认 boot header dt_size=0、更新只写 boot/customer，recovery 镜像不在该 SWU 的有效写入列表；记录精确哈希 |
 | v26 | 原厂 ADB 菜单确证、读设备工具已开发 | 提供仅已授权 USB ADB 设备的只读 DTB/内核/分区采集；**实机尚未连接，需物理操作** |
 
+## v27 已完成：真实 OEM customer 二进制逆向（2026-10-17）
+
+- **实际完整提取 67 个文件**，用户提供的 `customer` 4,366,336 B，解包 9,636,620 B 普通文件；没有提取或提交设备密钥及原厂专有程序。
+- 用户先前保存的旧版网页含 `onSelConn() / ADB` 选项，但 `26041414.2807.2` OTA 的 `index.html` 已移除该选项（底层 CGI 仍有 `conn=` 参数）。**不能再用原厂网页 200 / code=0 推断 ADB 可用**。
+- 原厂 `ly_testcp` 包含操作 USB Gadget 的 `ffs.adb`、`accessory.gs2`、`usb_mode` 命令字符串，但仅是静态证据。
+- **隐私发现**：网页“提交日志”从 CGI 下载 `dmesg + logcat` 后通过 OSS SDK 上传日志和设备信息。不要点击该按钮，也不要通过 `id=sts` 获取云端令牌。
+- [v27 完整发现与限制](docs/README-v27.md) · [v27 敏感信息已去除的证据表](docs/customer_v27_evidence.json)。不拆机、不使用 ADB 或未知网络接口、不刷机；下一阶段研究本地代码交叉引用。
+
 ## 实机 USB 核验后的最新结论（2026-10-16）
 
 - 用户 Windows 主机已确认 `adb devices -l` **无设备**；原厂 `conn=adb` 仅返回 `{"code":0}` 并未建立 ADB。请**停止**重复 ADB 测试，不要强制重绑定 `05AC:12A8` 为 Android 驱动。
