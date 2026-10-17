@@ -16,6 +16,14 @@
 | v25 | 用户原厂 OTA 的原始文件复核 | 确认 boot header dt_size=0、更新只写 boot/customer，recovery 镜像不在该 SWU 的有效写入列表；记录精确哈希 |
 | v26 | 原厂 ADB 菜单确证、读设备工具已开发 | 提供仅已授权 USB ADB 设备的只读 DTB/内核/分区采集；**实机尚未连接，需物理操作** |
 
+## v32 原厂升级失败路径审计（2026-10-17）
+
+- [v32 技术报告](docs/README-v32.md) · [v32 ARM 与 Shell 证据](docs/customer_v32_evidence.json)。
+- 用户真实 `app/update` ARM 指令证明存在**条件性** `format_udisk.sh` 调用；`app/check_udisk.sh` 也有挂载失败后重新建文件系统的回退逻辑。前者实际脚本主体不在已获取 `customer` 中，因此**未证实会在现机升级时触发或每次清盘**。
+- `swupdate_cmd.sh -i %s -e stable,upgrade_recovery &` 以**后台**方式启动；对 Shell 返回值的检查不等于所有 SWUpdate 阶段成功。原厂 `lyUpdate.sh` 还会替换运行中的后台更新程序和 httpd。
+- 已开发并交付独立 Python v32 离线审计器和测试：真实样本 **5/5** 通过；无原厂二进制的干净环境 **4 通过、1 跳过**。
+- 没有用户旧版固件、完整运行版备份或验证的不拆机恢复途径：**`SAFE_TO_UPGRADE=false`、`SAFE_TO_FLASH=false`**。
+
 ## v31 离线升级安全审计（2026-10-17）
 
 - [v31 完整技术报告](docs/README-v31.md) · [v31 精确证据 JSON](docs/customer_v31_evidence.json)。
