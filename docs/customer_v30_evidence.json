@@ -1,0 +1,37 @@
+{
+  "schema": "m6.v30.stock-ota-cgi-arm-flash-write-evidence",
+  "cgi_sha256": "3978333fc280e3ad5b0afa718474af61327f20812b54730d7bb26086dcfda6c9",
+  "source_version": "26041414.2807.2",
+  "running_version_observed": "25060316.2807.2",
+  "same_version": false,
+  "verified_bl_edges": {
+    "private_mtd_lookup": "0x145b4 -> 0x159f4",
+    "conn_storage_update": "0x14604 -> 0x15d24",
+    "block_read": "0x15f1c -> 0x10ce4",
+    "memcmp": "0x15f94 -> 0x10d20",
+    "memcpy": "0x15fe4 -> 0x10c00",
+    "ioctl_MEMUNLOCK": "0x160e8 -> 0x10bd0",
+    "ioctl_MEMERASE": "0x16134 -> 0x10bd0",
+    "block_write": "0x161e4 -> 0x10c90",
+    "fsync": "0x161f8 -> 0x10d98"
+  },
+  "ioctl_32bit_constants": {
+    "MEMGETINFO": "0x80204d01",
+    "MEMUNLOCK": "0x40084d06",
+    "MEMERASE": "0x40084d02"
+  },
+  "string_reference": {
+    "private": "0x145b0",
+    "conn=": "0x145c4",
+    "proc_mtd": "0x15a0c"
+  },
+  "conclusion": "Conn-setting path uses private MTD persistent read/compare/erase/write; CGI code=0 does not prove adbd is active.",
+  "execution_conditions_fully_explored": false,
+  "actual_installed_cgi_binary_verified": false,
+  "whole_flash_backup_proven": false,
+  "hardware_recovery_proven": false,
+  "user_disassembly_allowed": false,
+  "live_device_contacted": false,
+  "firmware_updated": false,
+  "safe_to_flash": false
+}
