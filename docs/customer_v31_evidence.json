@@ -1,0 +1,81 @@
+{
+  "schema": "m6.v31.swu-preflight-offline",
+  "version_sample": "26041414.2807.2",
+  "version_installed_user_report": "25060316.2807.2",
+  "same_version": false,
+  "archive_prefix_bytes": 1048576,
+  "embedded_cpio_offset": 45,
+  "cpio_entries": {
+    "sw-description": {
+      "header_offset": 45,
+      "data_offset": 173,
+      "length": 3186,
+      "crc_additive_hex": "0x0002d92a",
+      "matched": true
+    },
+    "customer": {
+      "header_offset": 3361,
+      "data_offset": 3481,
+      "length": 4366336,
+      "crc_additive_hex": "0x219e7f19",
+      "matched_full_user_customer": true,
+      "complete_in_header": false
+    }
+  },
+  "customer_sha256": "f81c48122f138855ad193fd48a7eafff84691c4a2bd621cb19d2c115c2d3a1d5",
+  "project": "ly2807",
+  "magic": "0xAA55A55A",
+  "stages": {
+    "upgrade_recovery": {
+      "boot_partition": "recovery",
+      "swu_mode": "upgrade_kernel",
+      "recovery_image_installed": false
+    },
+    "upgrade_kernel": {
+      "images": [
+        {
+          "name": "kernel",
+          "device": "/dev/by-name/boot"
+        },
+        {
+          "name": "customer",
+          "device": "/dev/by-name/customer"
+        }
+      ],
+      "swu_mode": "upgrade_usr"
+    },
+    "upgrade_usr": {
+      "boot_partition": "boot",
+      "ly_boot_mode": "normal",
+      "clears_swu_mode": true
+    }
+  },
+  "user_ota_updater_sha256": "be9e84ec0cca4ec505eb6177eaa42809c596bfef43a2a5f8ad62ebb0e40242c6",
+  "arm32_verified_call_edges": [
+    "0x11394 -> 0x12340",
+    "0x11428 -> 0x11e18",
+    "0x11520 -> 0x119b0",
+    "0x1251c -> 0x1095c",
+    "0x1258c -> 0x1095c",
+    "0x125ec -> 0x1095c",
+    "0x12638 -> 0x10950"
+  ],
+  "updater_strings": [
+    "fw_printenv -n %s",
+    "ly_project_name",
+    "magic",
+    "0xAA55A55A",
+    "cd %s;md5sum -c md5.txt",
+    "swupdate_cmd.sh -i %s -e stable,upgrade_recovery &"
+  ],
+  "verified_full_swu": false,
+  "verified_recovery": false,
+  "verified_full_backup": false,
+  "verified_installed_binary": false,
+  "cryptographic_signature_verification_proven": false,
+  "user_allows_disassembly": false,
+  "real_device_contacted": false,
+  "safe_to_upgrade": false,
+  "safe_to_flash": false,
+  "tests_passed": 6
+}
