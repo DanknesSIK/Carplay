@@ -1,0 +1,64 @@
+{
+  "schema": "m6.customer.offline-reverse.v27",
+  "original_sample_version": "26041414.2807.2",
+  "running_device_reported_version": "25060316.2807.2",
+  "version_mismatch": true,
+  "sample_sha256": "f81c48122f138855ad193fd48a7eafff84691c4a2bd621cb19d2c115c2d3a1d5",
+  "sample_bytes": 4366336,
+  "sample_type": "SquashFS v4.0 XZ",
+  "total_regular_files": 67,
+  "total_unpacked_regular_file_bytes": 9636620,
+  "selected_file_hashes": {
+    "ota/www/cgi-bin/index.cgi": "3978333fc280e3ad5b0afa718474af61327f20812b54730d7bb26086dcfda6c9",
+    "ota/www/js/cpbox.js": "7973c86346c4a52510f97ff21a442312068c6bd8b64f72d1e192fb9ad843bb10",
+    "ota/www/index.html": "5d12f509d1434b055f22c1597bf15d2ad49ebc1fa224c1ccedb7a04411989482",
+    "app/ly_testcp": "76d0e614179e67a8089ef81b732b65a6662a97e3278a22002a2e3444e1b40ed9",
+    "modules/8733bs.ko": "aa4a1205f77dd06b2ab82ff9e1af22125b9f831c1bc8fcfa92b0a5c74e6477b9"
+  },
+  "original_backend_html": {
+    "sha256": "f9d1595ea4df1cb360b6c0be5a986e7b36a3115a42eee125231d6e71c017e029",
+    "bytes": 24621,
+    "adb_picker": true,
+    "onSelConn_handler": true,
+    "connection_menu_anchor": true
+  },
+  "ota_backend_html": {
+    "bytes": 27224,
+    "adb_picker": false,
+    "onSelConn_handler": false,
+    "connection_menu_anchor": false,
+    "obsolete_hdconn_function_remains": true
+  },
+  "cgi_routes_static_evidence": [
+    "id=host",
+    "id=logcat",
+    "id=sts",
+    "id=set",
+    "id=p2p",
+    "id=upload",
+    "id=aa",
+    "id=png"
+  ],
+  "usb_static_strings_found_in_ly_testcp": [
+    "rm configs/c.1/ffs.adb",
+    "echo device > /sys/usb_ctrl/usb_mode",
+    "/sys/kernel/config/usb_gadget/g1/functions/accessory.gs2"
+  ],
+  "startup_script_launches_ly_testcp": true,
+  "cgi_logcat_gathers_dmesg_and_logcat": true,
+  "cgi_generates_tmp_gzip_log": true,
+  "frontend_oss_uploads_logs_and_device_info": true,
+  "cgi_has_proc_mtd_strings": true,
+  "caveats": [
+    "Upgrade sample is not the device's currently installed full flash image",
+    "String presence does not prove the command executes on this hardware",
+    "USB mode remains unverified, adb devices reported empty",
+    "Do not click the OEM submit-log button: frontend uploads diagnostic logs and selected device/user fields to OSS",
+    "Do not call STS/P2P/update/unknown CGI paths for diagnostics",
+    "No whole-device backup or recovery verification"
+  ],
+  "proprietary_binaries_committed": false,
+  "live_device_contacted": false,
+  "network_contacted_during_local_reverse": false,
+  "safe_to_flash": false
+}
