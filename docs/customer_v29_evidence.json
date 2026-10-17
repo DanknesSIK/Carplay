@@ -1,0 +1,66 @@
+{
+  "schema": "m6.v29.offline-arm32-xref",
+  "sample": "26041414.2807.2 customer, not current installed 25060316.2807.2",
+  "elf_sha256": {
+    "app/ly_testcp": "76d0e614179e67a8089ef81b732b65a6662a97e3278a22002a2e3444e1b40ed9",
+    "app/raaservice": "d57a0f3a3525eedf604b1f5c6c03c62d28d2b3fa90a35065c12ed398cd73dd6f",
+    "ota/www/cgi-bin/index.cgi": "3978333fc280e3ad5b0afa718474af61327f20812b54730d7bb26086dcfda6c9"
+  },
+  "platform_map": {
+    "v3": 0,
+    "v831": 1,
+    "v851": 3,
+    "09": 2,
+    "v821": 4,
+    "aixin513": 5
+  },
+  "functions": {
+    "platform": "0x158e8",
+    "efex_check": "0x13740",
+    "efex_platform_cmp": "0x13764",
+    "efex_check_caller": "0x14ee0"
+  },
+  "xefex": {
+    "aixin513_branch": "read ly_efex; parse atoi==1; no writes observed",
+    "non_aixin_branch": "read /proc/cmdline; find ly_efex_mode=; strtoul==1",
+    "interpretation": "static recovery-status check, NOT FEL activation",
+    "running_platform_proven": false
+  },
+  "verified_pic_xrefs": {
+    "ly_testcp:ly_efex_mode=": [
+      "0x137ec"
+    ],
+    "ly_testcp:ly_efex_sysfs": [
+      "0x13770"
+    ],
+    "ly_testcp:remove_ffs_adb": [
+      "0x1316c"
+    ],
+    "ly_testcp:usb_mode_device": [
+      "0x13000"
+    ],
+    "cgi:conn=": [
+      "0x136ec",
+      "0x145c4",
+      "0x151b0"
+    ],
+    "cgi:proc_mtd": [
+      "0x15a0c"
+    ],
+    "cgi:udisk_clear": [
+      "0x14550"
+    ],
+    "raaservice:ffs_adb": [
+      "0x2160c",
+      "0x21abc"
+    ]
+  },
+  "limitations": [
+    "Only ARM state PIC ldr/add idiom; missing xrefs do not prove unused code",
+    "Other SoC branch not the user's board",
+    "User's live firmware version mismatch",
+    "No actual FEL entry, backup, recovery, or device write performed"
+  ],
+  "safe_to_load": false,
+  "safe_to_flash": false
+}
