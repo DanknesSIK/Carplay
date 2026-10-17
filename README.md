@@ -16,6 +16,16 @@
 | v25 | 用户原厂 OTA 的原始文件复核 | 确认 boot header dt_size=0、更新只写 boot/customer，recovery 镜像不在该 SWU 的有效写入列表；记录精确哈希 |
 | v26 | 原厂 ADB 菜单确证、读设备工具已开发 | 提供仅已授权 USB ADB 设备的只读 DTB/内核/分区采集；**实机尚未连接，需物理操作** |
 
+## v33 原厂内核镜像与 Recovery 边界（2026-10-17）
+
+- [v33 技术报告](docs/README-v33.md) · [v33 已脱敏证据](docs/customer_v33_evidence.json)。用户原始 `kernel` 为 `ANDROID!` 旧式启动镜像：`v851s-lybox_rtl8`，仅 12 字节占位 ramdisk，`dt_size=0`。
+- 已从 `kernel` 成功解压 **4,044,400 字节 Linux 内核**，直接验证到 `Linux 4.9.191 #422 PREEMPT`、2026-03-27 编译标识。
+- 对内核中 2 个 `D0 0D FE ED` 魔数做 FDT 结构验证，**均不是真实 DTB**；`IKCFG_ST/IKCFG_ED` 均不存在，不能提取 `.config`。不排除 DTB 在未获得的其它分区。
+- `8733bs.ko` 的 `vermagic` 与 OTA 内核主版本一致，仍不代表符号 ABI、GPIO 与 SDIO 供电可以匹配当前实机。
+- SWU manifest 复核：**先切换至既有 Recovery，实际镜像写入仅 `boot` / `customer`，没有包含激活的 `recovery`、`rootfs` 镜像项**。现有 `kernel` 不可当成整机恢复包。
+- 已制成 Python 标准库的离线分析器和 ZIP。原厂样本 **7/7 测试通过**，仅包含公开代码的干净环境 **6 通过、1 跳过**；不提交任何私有原厂固件。
+- 用户不接受拆机，且没有完整旧版备份或验证的 Recovery：**不能升级或刷写**。
+
 ## v32 原厂升级失败路径审计（2026-10-17）
 
 - [v32 技术报告](docs/README-v32.md) · [v32 ARM 与 Shell 证据](docs/customer_v32_evidence.json)。
