@@ -1,0 +1,60 @@
+{
+  "schema": "m6.v33.bootimage-recovery-boundary",
+  "source_ota_version": "26041414.2807.2",
+  "user_reported_running_version": "25060316.2807.2",
+  "boot_image": {
+    "source_sha256": "5a17aa388f98011ba7f24508b9d6a4b84650c45ceb68f173307031dd15b992c9",
+    "source_bytes": 2066432,
+    "board_name": "v851s-lybox_rtl8",
+    "page_size": 2048,
+    "kernel_size": 2061216,
+    "kernel_address": "0x40008000",
+    "ramdisk_size": 12,
+    "ramdisk_address": "0x41000000",
+    "ramdisk_is_placeholder": true,
+    "ramdisk_hex": "72616d6469736b2e696d670a",
+    "second_size": 0,
+    "dt_size_header": 0,
+    "xz_payload": {
+      "offset_in_boot": 12192,
+      "compressed_size": 2051004,
+      "uncompressed_size": 4044400,
+      "uncompressed_sha256": "d2fd80a7d62b8f4510046125e7d95b352e43297efe0570c3ff9041eb4c084623"
+    },
+    "linux_banner": "Linux version 4.9.191 (os@machine) (gcc version 6.4.1 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) ) #422 PREEMPT Fri Mar 27 03:25:37 UTC 2026",
+    "valid_fdt_in_boot": [],
+    "valid_fdt_in_decompressed_kernel": [],
+    "fdt_magic_candidates_decompressed": 2,
+    "ikconfig_markers_found": false
+  },
+  "vendor_radio": {
+    "sha256": "aa4a1205f77dd06b2ab82ff9e1af22125b9f831c1bc8fcfa92b0a5c74e6477b9",
+    "vermagic": "4.9.191 preempt mod_unload ARMv7 thumb2 p2v8 ",
+    "same_kernel_release_as_ota": true,
+    "module_load_compatibility_proven": false
+  },
+  "swupdate_manifest": {
+    "project": "ly2807",
+    "recovery_image_install_entry_active": false,
+    "rootfs_image_install_entry_active": false,
+    "recovery_bootenv_set_before_updating": true,
+    "normal_bootenv_restored_at_final_stage": true,
+    "partial_prefix_sha256": "24dd123b6629f1da90613ed13bdab9a46919742e590088dcc1a2ac39eadd120d",
+    "entire_swu_archive_present": false
+  },
+  "critical_missing": [
+    "current installed boot image",
+    "recovery partition image",
+    "actual board DTB",
+    "rootfs and partition-table backup",
+    "proven non-disassembly BootROM recovery entry"
+  ],
+  "recovery_image_in_active_ota_manifest": false,
+  "can_restore_device_from_existing_samples": false,
+  "live_hardware_tested": false,
+  "safe_to_upgrade": false,
+  "safe_to_flash": false,
+  "tests_with_original": 7,
+  "tests_without_original_passed": 6,
+  "tests_without_original_skipped": 1
+}
