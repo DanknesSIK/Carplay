@@ -1,0 +1,48 @@
+{
+  "schema": "m6.v28.offline-usb-cgi-reverse",
+  "source": "User-provided stock update customer SquashFS 26041414.2807.2 (not installed 25060316.2807.2)",
+  "analyzed_elf_rodata": {
+    "app/ly_testcp": {
+      "sha256": "76d0e614179e67a8089ef81b732b65a6662a97e3278a22002a2e3444e1b40ed9",
+      "rodata_virtual_address": "0x203b0",
+      "rodata_file_offset": "0x103b0",
+      "rodata_size": 14447
+    },
+    "app/raaservice": {
+      "sha256": "d57a0f3a3525eedf604b1f5c6c03c62d28d2b3fa90a35065c12ed398cd73dd6f",
+      "rodata_virtual_address": "0x48410",
+      "rodata_file_offset": "0x38410",
+      "rodata_size": 107286
+    },
+    "ota/www/cgi-bin/index.cgi": {
+      "sha256": "3978333fc280e3ad5b0afa718474af61327f20812b54730d7bb26086dcfda6c9",
+      "rodata_virtual_address": "0x1630c",
+      "rodata_file_offset": "0x630c",
+      "rodata_size": 5025
+    }
+  },
+  "file_checksums": {
+    "app/lyLink.sh": "6c063085067a2168ac90266b382ab99ff7cd109dc987033543551f51a92fd170",
+    "app/lyUpdate.sh": "657391cd8415c0f26f3c4a2e67f0d7ad0cfb6dfd75c438e8d84a2d3886ff89df",
+    "app/mtpservice.conf": "ee664ca6b4e42062f1d03399d7be60e4643f5941c529414a8386e15c6429befb",
+    "ota/www/index.html": "5d12f509d1434b055f22c1597bf15d2ad49ebc1fa224c1ccedb7a04411989482"
+  },
+  "finding_summary": {
+    "carplay_launches_ly_testcp_f2": true,
+    "android_auto_uses_distinct_raaservice_branch": true,
+    "ly_testcp_has_both_rockchip_and_sunxi_usb_gadget_strings": true,
+    "ly_testcp_rodata_contains_removal_of_ffs_adb": true,
+    "ly_testcp_rodata_contains_acm_gadget_config": true,
+    "ly_testcp_rodata_contains_efex_sysfs_and_cmdline": true,
+    "raaservice_contains_ffs_adb_string_but_alternate_branch": true,
+    "cgi_rodata_contains_proc_mtd_and_flash_erase_symbols": true,
+    "cgi_contains_user_disk_reset_string": true,
+    "lyUpdate_overlay_changes_web_and_cgi": true,
+    "mtpservice_conf_has_udisk_rw_and_0x0e8d_placeholder": true
+  },
+  "real_efex_conditions_verified": false,
+  "m6_board_matched_recovery_verified": false,
+  "runtime_mode_verified": false,
+  "live_device_contacted": false,
+  "safe_to_flash": false
+}
