@@ -1,0 +1,47 @@
+{
+  "schema": "m6.v32.update-errorpath-static",
+  "sample_ota_version": "26041414.2807.2",
+  "device_reported_running_version": "25060316.2807.2",
+  "running_version_matched": false,
+  "updater_sha256": "be9e84ec0cca4ec505eb6177eaa42809c596bfef43a2a5f8ad62ebb0e40242c6",
+  "verified_arm_addresses": {
+    "strncmp_upgrade_prefix": "0x10e00 -> 0x1095c",
+    "branch_not_upgrade_prefix": "0x10e08 bne -> 0x10f28",
+    "format_udisk_shell_wrapper": "0x10f30 -> 0x119b0",
+    "set_update_boot_mode": "0x114ec -> 0x119b0",
+    "create_udisk_update_flag": "0x114f8 -> 0x119b0",
+    "launch_swupdate_background": "0x11520 -> 0x119b0",
+    "check_shell_launch_result": "0x11524 cmp r0, #0",
+    "shell_wrapper_invokes_libc_system": "0x119b8 -> 0x108f0"
+  },
+  "check_udisk_shell_code": {
+    "mkfs_jffs2_fallback": true,
+    "fsck_ext4_auto_repair": true,
+    "mkfs_ext4_fallback": true
+  },
+  "lyUpdate_shell_code": {
+    "kills_existing_update_SIGKILL": true,
+    "restarts_update_from_tmp": true,
+    "restarts_httpd": true
+  },
+  "risk_findings": {
+    "conditional_format_script_call_verified": true,
+    "format_script_body_in_customer": false,
+    "format_script_execution_on_current_device_proven": false,
+    "swupdate_command_background": true,
+    "swupdate_shell_status_is_not_final_stage_completion": true,
+    "fallback_udisk_format_possible": true,
+    "verified_recovery": false,
+    "verified_complete_backup": false,
+    "verified_rollback": false
+  },
+  "tests": {
+    "with_private_real_sample": 5,
+    "standalone_independent": 4,
+    "standalone_skipped_private": 1
+  },
+  "device_contacted": false,
+  "flash_writes_performed": false,
+  "safe_to_upgrade": false,
+  "safe_to_flash": false
+}
