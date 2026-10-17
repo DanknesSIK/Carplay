@@ -16,6 +16,14 @@
 | v25 | 用户原厂 OTA 的原始文件复核 | 确认 boot header dt_size=0、更新只写 boot/customer，recovery 镜像不在该 SWU 的有效写入列表；记录精确哈希 |
 | v26 | 原厂 ADB 菜单确证、读设备工具已开发 | 提供仅已授权 USB ADB 设备的只读 DTB/内核/分区采集；**实机尚未连接，需物理操作** |
 
+## v28–v30 本机原厂文件离线逆向（2026-10-17）
+
+- **v28**：从用户原厂 `customer` 提取的 7 个真正 ARM 程序/脚本证明 CarPlay 与 Android Auto 启动路径不同、USB Gadget 为多平台片段，同时发现 `ly_efex` 和 UDISK/CGI 擦写线索。详见 [v28](docs/README-v28.md)。
+- **v29**：真实 ARM32 交叉引用及平台函数 `getenv("LY_PLATFORM")` 分支验证：`v851=3`，`aixin513=5`。仅 `aixin513` 分支读取 `ly_efex` sysfs，其它平台（含 `v851`）读取 `/proc/cmdline` 里的 `ly_efex_mode=`；**这是恢复状态检查，不是已验证的 FEL 激活入口**。详见 [v29](docs/README-v29.md)。
+- **v30**：对原始 OTA `index.cgi` 进行 ARM 调用边核查：`conn=` 配置处理进入 `private` MTD 的读、比较、解锁、擦除、写回与 `fsync` 链。此前 `{"code":0}` 只代表 CGI 设置处理成功/接受，**不能证明 ADB 已启动；请勿重复请求修改模式**。本地验证 9 条调用关系和 3 个 MTD ioctl 常量。详见 [v30](docs/README-v30.md)。
+
+**重要版本限制**：分析用的是 `26041414.2807.2` OTA，用户机器先前报告的是 `25060316.2807.2`；无法断定 OTA 二进制与在用版本完全相同。用户**不接受拆机或物理短接**；没有原机完整备份或非拆机恢复路径，因此 `SAFE_TO_FLASH=false`，停止盲目内核升级和其他主板固件试刷。
+
 ## v27 已完成：真实 OEM customer 二进制逆向（2026-10-17）
 
 - **实际完整提取 67 个文件**，用户提供的 `customer` 4,366,336 B，解包 9,636,620 B 普通文件；没有提取或提交设备密钥及原厂专有程序。
