@@ -16,6 +16,15 @@
 | v25 | 用户原厂 OTA 的原始文件复核 | 确认 boot header dt_size=0、更新只写 boot/customer，recovery 镜像不在该 SWU 的有效写入列表；记录精确哈希 |
 | v26 | 原厂 ADB 菜单确证、读设备工具已开发 | 提供仅已授权 USB ADB 设备的只读 DTB/内核/分区采集；**实机尚未连接，需物理操作** |
 
+## v31 离线升级安全审计（2026-10-17）
+
+- [v31 完整技术报告](docs/README-v31.md) · [v31 精确证据 JSON](docs/customer_v31_evidence.json)。
+- **校验了用户原始 OTA 索引与 customer 文件的真实一致性**：SWU 前缀为 CRC-newc；`sw-description` 和 `customer` 的 CPIO 累加 CRC、尺寸与现有客户镜像全部吻合。**未获得完整 SWU 归档，不能校验整个升级包**。
+- 原厂 manifest 在 `upgrade_recovery` 阶段将 `boot_partition=recovery`，但 `recovery` 镜像写入被注释；下一阶段才把 `kernel` 和 `customer` 写入 `boot`/`customer`，第三阶段返回普通引导。**既有 Recovery 是否可启动完全未知**。
+- 原厂 `app/update` 的 7 条 ARM32 BL 调用边已核实：先校验项目和 magic，随后处理文件/MD5，再调用 `swupdate_cmd.sh -i %s -e stable,upgrade_recovery &`。**有项目校验不代表完整主板兼容或恢复可靠**。
+- 提供仅本地文件操作的 v31 Python 审计器、6 个测试及脱敏报告；不提交原厂固件二进制。
+- 仍无在用 `25060316.2807.2` 镜像、可用 Recovery 的实机证据、完整恢复备份或非拆机救砖方案：**`SAFE_TO_UPGRADE=false`、`SAFE_TO_FLASH=false`**。
+
 ## v28–v30 本机原厂文件离线逆向（2026-10-17）
 
 - **v28**：从用户原厂 `customer` 提取的 7 个真正 ARM 程序/脚本证明 CarPlay 与 Android Auto 启动路径不同、USB Gadget 为多平台片段，同时发现 `ly_efex` 和 UDISK/CGI 擦写线索。详见 [v28](docs/README-v28.md)。
