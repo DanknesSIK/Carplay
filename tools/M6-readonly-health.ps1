@@ -19,11 +19,14 @@ for ($i = 1; $i -le $Samples; $i++) {
         $timer.Stop()
         if ($response.StatusCode -ne 200) { throw "HTTP $($response.StatusCode)" }
         $json = $response.Content | ConvertFrom-Json
-        if ($null -ne $json.sys -and $null -ne $json.sys.appver) { $version = [string]$json.sys.appver }
-        if ($null -ne $json.sig) { $channel = [string]$json.sig }
-        if ($null -ne $json.vid) { $videoMode = [string]$json.vid }
-        if ($null -ne $json.aud) { $audioMode = [string]$json.aud }
-        if ($null -ne $json.delay) { $delayMode = [string]$json.delay }
+        if ($null -ne $json.PSObject.Properties['sys']) {
+            $sys = $json.sys
+            if ($null -ne $sys -and $null -ne $sys.PSObject.Properties['appver']) { $version = [string]$sys.appver }
+        }
+        if ($null -ne $json.PSObject.Properties['sig']) { $channel = [string]$json.sig }
+        if ($null -ne $json.PSObject.Properties['vid']) { $videoMode = [string]$json.vid }
+        if ($null -ne $json.PSObject.Properties['aud']) { $audioMode = [string]$json.aud }
+        if ($null -ne $json.PSObject.Properties['delay']) { $delayMode = [string]$json.delay }
         $records.Add([pscustomobject]@{sample=$i;ok=$true;rtt_ms=[math]::Round($timer.Elapsed.TotalMilliseconds,2)})
     } catch {
         $timer.Stop()
